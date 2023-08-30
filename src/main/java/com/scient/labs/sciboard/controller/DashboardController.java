@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.scient.labs.sciboard.dto.DeviceRequest;
 import com.scient.labs.sciboard.dto.DeviceStats;
 import com.scient.labs.sciboard.dto.MetricRequest;
 import com.scient.labs.sciboard.dto.MetricRes;
@@ -41,5 +42,10 @@ public class DashboardController {
 	@PostMapping("/envmetrics")
 	public List<MetricRes> getDeviceRoomTempMetrics(@RequestBody MetricRequest request) {
 		return dashboardService.getRoomTempMetricsData(request);
+	}
+	
+	@PostMapping("/device/update")
+	public void updateDeviceStatus(@RequestBody DeviceRequest request) {
+		dashboardService.updateDeviceStatus(request);
 	}
 }

@@ -2,10 +2,12 @@ package com.scient.labs.sciboard.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.scient.labs.sciboard.dto.DeviceRequest;
 import com.scient.labs.sciboard.dto.DeviceStats;
 import com.scient.labs.sciboard.dto.MetricRequest;
 import com.scient.labs.sciboard.dto.MetricRes;
@@ -36,7 +38,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public List<MetricRes> getRoomTempMetricsData(MetricRequest request) {
-		List<RoomTemperature> tempList = roomTemperatureRepo.findByTimestampBetween(ZonedDateTime.parse(request.getStartDate()), ZonedDateTime.parse(request.getEndDate()));
+		List<RoomTemperature> tempList = roomTemperatureRepo.findByTimestampBetweenAndDevice(ZonedDateTime.parse(request.getStartDate()), ZonedDateTime.parse(request.getEndDate()), request.getDevice());
 		return MetricRes.buildList(null, tempList);
 	}
 
@@ -62,6 +64,16 @@ public class DashboardServiceImpl implements DashboardService {
 
 	public List<Device> getDevices() {
 		return deviceRepo.findAll();
+	}
+	
+	public void updateDeviceStatus(DeviceRequest request) {
+		Optional<Device> device = deviceRepo.findByNameAndLocation(request.getName(), request.getLocation());
+		if(device.isPresent()) {
+			Device dev = device.get();
+			dev.setActive(request.getActive());
+			deviceRepo.save(dev);
+		}		
+		
 	}
 
 }
